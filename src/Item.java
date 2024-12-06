@@ -5,12 +5,14 @@ public abstract class Item implements Subject {
     private String title;
     private boolean isBorrowed;
     private long maxBorrowTime;
+    private Queue<Observer> observers;
 
     public Item(UUID id, String title, long mxBorrowTime) {
         this.id = id;
         this.title = title;
         this.maxBorrowTime = maxBorrowTime;
         this.isBorrowed = false;
+        this.observers = new Queue<>();
     }
 
     public UUID getId() {
@@ -33,7 +35,7 @@ public abstract class Item implements Subject {
         return borrowed;
     }
 
-    public void setBorrowed(Boolean borrowed) {
+    public void setBorrowed(boolean borrowed) {
         this.borrowed = borrowed;
     }
 
@@ -46,5 +48,21 @@ public abstract class Item implements Subject {
     }
     
     public abstract String getItemType();
+
+     public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.notifyItemAvailable(this);
+        }
+    }
 
 }

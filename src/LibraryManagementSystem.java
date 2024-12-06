@@ -14,18 +14,18 @@ public class LibraryManagementSystem {
         this.borrowingUsers = new HashMap<>();
     }
 
-    public List<Item> search(String searchText) {
+    public List<Item> search (String searchText) {
         return items.stream()
                 .filter(item -> searchText.equalsIgnoreCase(item.getTitle()) || Objects.equals(searchText, item.getItemType()))
                 .collect(Collectors.toList());
     }
 
-    public void borrowItem (User user, Item item) {
+    public void lendItem (User user, Item item) {
         if (!item.isBorrowed() || waitingMap.containsKey(item)) {
             item.setBorrowed(true);
             borrowedItems.put(item,user);
             borrowingUsers.put(user,item);
-            user.borrowItem(item);
+            user.lendItem(item);
             removeObserver(user, item);
         } else {
             if (!(borrowingUsers.containsKey(user) && borrowedItems.containsKey(item))) {
@@ -77,7 +77,7 @@ public class LibraryManagementSystem {
         if (waitingObserver != null) {
             ItemObserver nextUser = waitingObserver.peek();
             if (nextUser != null) {
-                nextUser.update(item);
+                nextUser.notifyItemAvailable(item);
             }
         } else {
             items.add(item);
