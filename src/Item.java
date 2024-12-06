@@ -49,7 +49,8 @@ public abstract class Item implements Subject {
     
     public abstract String getItemType();
 
-     public void addObserver(Observer observer) {
+    @Override
+    public void registerObserver(Observer observer) {
         observers.add(observer);
     }
 
@@ -61,7 +62,7 @@ public abstract class Item implements Subject {
     @Override
     public void notifyObservers() {
         for (Observer observer : observers) {
-            observer.notifyItemAvailable(this);
+            observer.notifyItemAvailable(this); // todo alle informieren???
         }
     }
 

@@ -3,13 +3,11 @@ import java.util.stream.Collectors;
 
 public class LibraryManagementSystem {
     private final Map<UUID,Item> items;
-    private final Map<Item,Queue<ItemObserver>> waitingMap;
     private final Map<Item,User> borrowedItems;
     private final Map<User,Item> borrowingUsers;
 
     public LibraryManagementSystem() {
         this.items = new HashMap<>();
-        this.waitingMap = new HashMap<>();
         this.borrowedItems = new HashMap<>();
         this.borrowingUsers = new HashMap<>();
     }
@@ -21,12 +19,13 @@ public class LibraryManagementSystem {
     }
 
     public void lendItem (User user, Item item) {
-        if (!item.isBorrowed() || waitingMap.containsKey(item)) {
+        if (!item.isBorrowed() && 
+           (item.getObserversitem.getNextUser.equals(user) || item.) {
             item.setBorrowed(true);
             borrowedItems.put(item,user);
             borrowingUsers.put(user,item);
-            user.lendItem(item);
-            removeObserver(user, item);
+            user.lendItem(item); //todo wue früher???
+            item.removeObserver(user);
         } else {
             if (!(borrowingUsers.containsKey(user) && borrowedItems.containsKey(item))) {
                 registerObserver(user, item);
@@ -46,32 +45,6 @@ public class LibraryManagementSystem {
     }
 
     @Override
-    public void registerObserver(ItemObserver observer, Item item) {
-        Queue<ItemObserver> waitingObserver = waitingMap.get(item);
-        if (waitingObserver == null) {
-            waitingObserver = new LinkedList<>();
-            waitingObserver.add(observer);
-            waitingMap.put(item, waitingObserver);
-        } else {
-            waitingObserver.add(observer);
-            waitingMap.replace(item, waitingObserver);
-        }
-    }
-
-    @Override
-    public void removeObserver(ItemObserver observer, Item item) {
-        Queue<ItemObserver> waitingObserver = waitingMap.get(item);
-        if (waitingObserver != null) {
-            waitingObserver.remove(observer);
-            if (waitingObserver.isEmpty()) {
-                waitingMap.remove(item);
-            } else {
-                waitingMap.replace(item, waitingObserver);
-            }
-        }
-    }
-
-    @Override
     public void checkAndNotifyNextObserver(Item item) {
         Queue<ItemObserver> waitingObserver = waitingMap.get(item);
         if (waitingObserver != null) {
@@ -86,6 +59,11 @@ public class LibraryManagementSystem {
 //        for (ItemObserver observer : waitingList) {
 //            observer.update(item);
 //        }
+    }
+
+    // Todo tests
+    public void unsubscribeFromWaitingList(User user, Item item) {
+        item.removeObserver(user);
     }
 
     public List<Item> getItems() {
