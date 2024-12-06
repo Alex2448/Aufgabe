@@ -5,7 +5,8 @@ public class Book extends Item {
     private String author;
     private Year publicationYear;
 
-    public Book(UUID id, String title, String author, Year publicationYear) {
+    public Book(String title, String author, Year publicationYear) {
+        UUID id = UUID.randomUUID();
         super(id, title, 30);
         this.author = author;
         this.publicationYear = publicationYear;
@@ -15,16 +16,8 @@ public class Book extends Item {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public Year getPublicationYear() {
         return publicationYear;
-    }
-
-    public void setPublicationYear(Year publicationYear) {
-        this.publicationYear = publicationYear;
     }
 
     @Override
@@ -34,6 +27,6 @@ public class Book extends Item {
 
     @Override
     public String toString() {
-        return "Book " + getTitle();
+        return "Book " + getTitle()  + " from " + getAuthor() + " (" + getPublicationYear() + ")"
     }
 }

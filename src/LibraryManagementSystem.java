@@ -1,28 +1,27 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class LibraryManagementSystem implements Subject {
-    private final List<Item> borrowableItems;
-    private final Map<Item, Queue<ItemObserver>> waitingMap;
+public class LibraryManagementSystem {
+    private final Map<UUID,Item> items;
+    private final Map<Item,Queue<ItemObserver>> waitingMap;
     private final Map<Item,User> borrowedItems;
     private final Map<User,Item> borrowingUsers;
 
     public LibraryManagementSystem() {
-        this.borrowableItems = new ArrayList<>();
+        this.items = new HashMap<>();
         this.waitingMap = new HashMap<>();
         this.borrowedItems = new HashMap<>();
         this.borrowingUsers = new HashMap<>();
     }
 
     public List<Item> search(String searchText) {
-        return borrowableItems.stream()
+        return items.stream()
                 .filter(item -> searchText.equalsIgnoreCase(item.getTitle()) || Objects.equals(searchText, item.getItemType()))
                 .collect(Collectors.toList());
     }
 
     public void borrowItem (User user, Item item) {
-        if (!search(item.getTitle()).isEmpty() || waitingMap.containsKey(item)) {
-            borrowableItems.remove(item);
+        if (!item.isBorrowed() || waitingMap.containsKey(item)) {
             item.setBorrowed(true);
             borrowedItems.put(item,user);
             borrowingUsers.put(user,item);
@@ -81,7 +80,7 @@ public class LibraryManagementSystem implements Subject {
                 nextUser.update(item);
             }
         } else {
-            borrowableItems.add(item);
+            items.add(item);
         }
         ; //TODO: nur Menschen, die genau das Item abonniert haben sollen notified werden
 //        for (ItemObserver observer : waitingList) {
@@ -89,12 +88,16 @@ public class LibraryManagementSystem implements Subject {
 //        }
     }
 
-    public List<Item> getBorrowableItems() {
-        return borrowableItems;
+    public List<Item> getItems() {
+        return items;
     }
 
-    public void addBorrowableItem(Item item) {
-        borrowableItems.add(item);
+    public void addItem(Item item) {
+        items.add(item);
+    }
+
+    public void removeItem(Item item) {
+        items.delete(item);
     }
 
     public Map<Item, Queue<ItemObserver>> getWaitingList() {

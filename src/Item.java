@@ -1,16 +1,16 @@
 import java.util.UUID;
 
-public abstract class Item {
+public abstract class Item implements Subject {
     private UUID id;
     private String title;
-    private boolean borrowed;
-    private long borrowTime;
+    private boolean isBorrowed;
+    private long maxBorrowTime;
 
-    public Item(UUID id, String title, long borrowTime) {
+    public Item(UUID id, String title, long mxBorrowTime) {
         this.id = id;
         this.title = title;
-        this.borrowTime = borrowTime;
-        this.borrowed = false;
+        this.maxBorrowTime = maxBorrowTime;
+        this.isBorrowed = false;
     }
 
     public UUID getId() {
@@ -38,12 +38,13 @@ public abstract class Item {
     }
 
     public long getBorrowTime() {
-        return borrowTime;
+        return maxBorrowTime;
     }
 
-    public void setBorrowTime(long borrowTime) {
-        this.borrowTime = borrowTime;
+    public void setBorrowTime(long mxBorrowTime) {
+        this.maxBorrowTime = maxBorrowTime;
     }
+    
     public abstract String getItemType();
 
 }
