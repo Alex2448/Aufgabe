@@ -12,7 +12,7 @@ public class User implements ItemObserver {
     }
 
     @Override
-    public void notifyItemAvailable(Item item) {
+    public void notifiedItemAvailable(Item item) {
         System.out.println("The " + item.toString() + " has been returned and is now available.");
     }
 

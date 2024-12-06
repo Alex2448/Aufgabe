@@ -60,10 +60,8 @@ public abstract class Item implements Subject {
     }
 
     @Override
-    public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.notifyItemAvailable(this); // todo alle informieren???
-        }
+    public void notifyNextObserver() {
+        Observer observer = observers.pull()
+        observer.notifyItemAvailable(this);
     }
-
 }

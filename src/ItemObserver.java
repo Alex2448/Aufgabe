@@ -1,3 +1,3 @@
 public interface ItemObserver {
-    void notifyItemAvailable(Item item);
+    void notifiedItemAvailable(Item item);
 }

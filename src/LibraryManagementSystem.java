@@ -20,7 +20,7 @@ public class LibraryManagementSystem {
 
     public void lendItem (User user, Item item) {
         if (!item.isBorrowed() && 
-           (item.getObserversitem.getNextUser.equals(user) || item.) {
+           (item.getObservers.isEmpty() || item.getNextUser.equals(user)) {
             item.setBorrowed(true);
             borrowedItems.put(item,user);
             borrowingUsers.put(user,item);
@@ -39,26 +39,9 @@ public class LibraryManagementSystem {
             User user = borrowedItems.get(item);
             borrowedItems.remove(item,user);
             borrowingUsers.remove(user, item);
-            user.returnItem(item);
-            checkAndNotifyNextObserver(item);
+            user.returnItem(item); // todo wie früher??
+            item.notifyNextObserver();
         }
-    }
-
-    @Override
-    public void checkAndNotifyNextObserver(Item item) {
-        Queue<ItemObserver> waitingObserver = waitingMap.get(item);
-        if (waitingObserver != null) {
-            ItemObserver nextUser = waitingObserver.peek();
-            if (nextUser != null) {
-                nextUser.notifyItemAvailable(item);
-            }
-        } else {
-            items.add(item);
-        }
-        ; //TODO: nur Menschen, die genau das Item abonniert haben sollen notified werden
-//        for (ItemObserver observer : waitingList) {
-//            observer.update(item);
-//        }
     }
 
     // Todo tests
