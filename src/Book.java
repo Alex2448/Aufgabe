@@ -2,12 +2,11 @@ import java.time.Year;
 import java.util.UUID;
 
 public class Book extends Item {
-    private String author;
-    private Year publicationYear;
+    private final String author;
+    private final Year publicationYear;
 
     public Book(String title, String author, Year publicationYear) {
-        UUID id = UUID.randomUUID();
-        super(id, title, 30);
+        super(UUID.randomUUID(), title, 30);
         this.author = author;
         this.publicationYear = publicationYear;
     }
@@ -27,6 +26,6 @@ public class Book extends Item {
 
     @Override
     public String toString() {
-        return "Book " + getTitle()  + " from " + getAuthor() + " (" + getPublicationYear() + ")"
+        return "Book " + getTitle()  + " from " + getAuthor() + " (" + getPublicationYear() + ")";
     }
 }

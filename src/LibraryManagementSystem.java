@@ -12,23 +12,24 @@ public class LibraryManagementSystem {
         this.borrowingUsers = new HashMap<>();
     }
 
+    //TODO
     public List<Item> search (String searchText) {
-        return items.stream()
+        return items.values().stream()
                 .filter(item -> searchText.equalsIgnoreCase(item.getTitle()) || Objects.equals(searchText, item.getItemType()))
                 .collect(Collectors.toList());
     }
 
     public void lendItem (User user, Item item) {
-        if (!item.isBorrowed() && 
-           (item.getObservers.isEmpty() || item.getNextUser.equals(user)) {
+        if (!item.isBorrowed() && items.containsKey(item.getId()) &&
+           (item.getObservers().isEmpty() || item.getNextObserver().equals(user))) {
             item.setBorrowed(true);
             borrowedItems.put(item,user);
             borrowingUsers.put(user,item);
-            user.lendItem(item); //todo wue früher???
+            // user.lendItem(item); //todo wue früher???
             item.removeObserver(user);
         } else {
             if (!(borrowingUsers.containsKey(user) && borrowedItems.containsKey(item))) {
-                registerObserver(user, item);
+                item.registerObserver(user);
             }
         }
     }
@@ -39,7 +40,7 @@ public class LibraryManagementSystem {
             User user = borrowedItems.get(item);
             borrowedItems.remove(item,user);
             borrowingUsers.remove(user, item);
-            user.returnItem(item); // todo wie früher??
+            // user.returnItem(item); // todo wie früher??
             item.notifyNextObserver();
         }
     }
@@ -50,19 +51,15 @@ public class LibraryManagementSystem {
     }
 
     public List<Item> getItems() {
-        return items;
+        return new ArrayList<>(items.values());
     }
 
     public void addItem(Item item) {
-        items.add(item);
+        items.put(item.getId(), item);
     }
 
     public void removeItem(Item item) {
-        items.delete(item);
-    }
-
-    public Map<Item, Queue<ItemObserver>> getWaitingList() {
-        return waitingMap;
+        items.remove(item.getId());
     }
 
     public Map<Item, User> getBorrowedItems() {
