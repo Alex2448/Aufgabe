@@ -2,11 +2,11 @@ import java.util.LinkedList;
 import java.util.UUID;
 
 public abstract class Item implements Subject {
-    private UUID id;
-    private String title;
-    private boolean isBorrowed;
-    private long maxBorrowTime;
+    private final UUID id;
+    private final String title;
+    private final long maxBorrowTime;
     private final LinkedList<ItemObserver> observers;
+    private boolean isBorrowed;
 
     public Item(UUID id, String title, long maxBorrowTime) {
         this.id = id;
@@ -16,20 +16,14 @@ public abstract class Item implements Subject {
         this.observers = new LinkedList<>();
     }
 
+    public abstract String getItemType();
+
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public Boolean isBorrowed() {
@@ -44,20 +38,8 @@ public abstract class Item implements Subject {
         return maxBorrowTime;
     }
 
-    public void setBorrowTime(long maxBorrowTime) {
-        this.maxBorrowTime = maxBorrowTime;
-    }
-    
-    public abstract String getItemType();
-
-    //TODO: soll das in ItemObserver Methode sein??
     public LinkedList<ItemObserver> getObservers() {
         return observers;
-    }
-
-    //TODO: soll das in ItemObserver Methode sein??
-    public ItemObserver getNextObserver() {
-        return observers.getFirst();
     }
 
     @Override

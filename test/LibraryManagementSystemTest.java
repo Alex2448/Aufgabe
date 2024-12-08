@@ -55,28 +55,34 @@ public class LibraryManagementSystemTest {
     }
 
     @Test
-    public void testSearchByTypeShouldNotFindNonExistingBook() {
+    public void testSearchByTypeShouldNotFindNonExistingItemType() {
         //When
-        List<Item> bookList = library.search("BoardGame");
+        List<Item> boardGameList = library.search("BoardGame");
 
         //Then
-        assertTrue(bookList.isEmpty());
+        assertTrue(boardGameList.isEmpty());
     }
 
     @Test
-    public void testBorrowItem() {
+    public void testBorrowItems() {
         //Given
-        Item book = library.search("Dune").getFirst();
+        Item bookDune = library.search("Dune").getFirst();
+        Item bookGalaxy = library.search("The Hitchhiker's Guide to the Galaxy").getFirst();
 
         //When
-        library.lendItem(user1, book);
+        library.lendItem(user1, bookDune);
+        library.lendItem(user1, bookGalaxy);
 
         //Then
-        assertTrue(book.isBorrowed());
+        assertTrue(bookDune.isBorrowed());
+        assertTrue(bookGalaxy.isBorrowed());
+        assertTrue(library.getBorrowingUsers().containsKey(user1));
+        assertTrue(library.getBorrowingUsers().get(user1).contains(bookDune));
+        assertTrue(library.getBorrowingUsers().get(user1).contains(bookGalaxy));
     }
 
     @Test
-    public void testReturnItemAndNotifyWaitingList() {
+    public void testBorrowItemAndNotifyWaitingList() {
         //Given
         Item book = library.search("Dune").getFirst();
 
@@ -90,7 +96,48 @@ public class LibraryManagementSystemTest {
         assertTrue(library.getBorrowingUsers().containsKey(user1));
         assertFalse(library.getBorrowingUsers().containsKey(user2));
         assertEquals(1, book.getObservers().size());
-        assertSame(book.getNextObserver(), user2);
+        assertSame(book.getObservers().getFirst(), user2);
+    }
+
+    @Test
+    public void testRegisterUserAtMultipleWaitingLists() {
+        //Given
+        Item bookDune = library.search("Dune").getFirst();
+        Item bookGalaxy = library.search("The Hitchhiker's Guide to the Galaxy").getFirst();
+
+        //When
+        library.lendItem(user1, bookDune);
+        library.lendItem(user2, bookGalaxy);
+        library.lendItem(user1, bookGalaxy);
+
+        // Then
+        assertTrue(bookDune.isBorrowed());
+        assertTrue(bookGalaxy.isBorrowed());
+        assertTrue(library.getBorrowedItems().containsKey(bookDune));
+        assertTrue(library.getBorrowedItems().containsKey(bookGalaxy));
+        assertTrue(library.getBorrowingUsers().containsKey(user1));
+        assertTrue(library.getBorrowingUsers().containsKey(user2));
+        assertEquals(1, bookGalaxy.getObservers().size());
+        assertEquals(0, bookDune.getObservers().size());
+        assertSame(bookGalaxy.getObservers().getFirst(), user1);
+    }
+
+    @Test
+    public void testRemoveFromWaitingList() {
+        //Given
+        Item book = library.search("Dune").getFirst();
+
+        //When
+        library.lendItem(user1, book);
+        library.lendItem(user2, book);
+        library.unsubscribeFromWaitingList(user2, book);
+
+        // Then
+        assertTrue(book.isBorrowed());
+        assertTrue(library.getBorrowedItems().containsKey(book));
+        assertTrue(library.getBorrowingUsers().containsKey(user1));
+        assertFalse(library.getBorrowingUsers().containsKey(user2));
+        assertEquals(0, book.getObservers().size());
     }
 
     @Test
